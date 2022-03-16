@@ -1,0 +1,46 @@
+library(ggplot2)
+library(hrbrthemes)
+library(reshape2)
+library(scales)
+library(ggthemes)
+library(dplyr)
+
+df = hw2
+
+df$sizedev <- as.numeric(df$size) / 1000
+which(df$language == "c")
+df$time[which(df$language == "c")] <- 1
+df$size[which(df$language == "c")] <- 1
+df$sizedev[which(df$language == "c")] <- 1
+line.df <- df[df$language == "c", ]
+
+#Plot1
+
+ggplot(df, aes(x=problem, y=time, color = language, shape = language, group = 1)) + 
+  geom_point(size = 4) +
+  scale_shape_manual(values=c(46, 15, 19, 18))+
+  scale_color_manual(values=c("#e6bb20", "#cfcfcf", "#e6bb20", "#cfcfcf")) +
+  scale_y_log10(breaks = trans_breaks("log10", function(x) 10^x),
+                labels = trans_format("log10", math_format(10^.x))) +
+  geom_line(data = line.df, size = 1) +
+  xlab("Problem") +
+  ylab("Execution Time (relative to C)") +
+  theme_minimal()
+
+
+
+
+#Plot2
+
+ggplot(df, aes(x=problem, y=sizedev, color = language, shape = language, group = 1)) + 
+  geom_point(size = 4) +
+  scale_shape_manual(values=c(46, 15, 19, 18))+
+  scale_color_manual(values=c("#e6bb20", "#cfcfcf", "#e6bb20", "#cfcfcf")) +
+  geom_line(data = line.df, size = 1) +
+  scale_y_continuous(breaks = seq(from = 0.4, to = 1.7, by = 0.2), limits = c(0.3, 1.7))  +
+  xlab("Problem") +
+  ylab("Code Size (relative to C)") +
+  theme_minimal()
+
+
+
